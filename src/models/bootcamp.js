@@ -9,11 +9,13 @@ const bootcampSchema = new mongoose.Schema(
       unique: true,
       maxlength: [50, "Name cannot be more than 50 characters"],
     },
-    slug: String,
+    slug: {
+      type: String,
+    },
     description: {
       type: String,
       required: [true, "Please add a description"],
-      maxlength: [50, "Description cannot be more than 500 characters"],
+      maxlength: [500, "Description cannot be more than 500 characters"],
     },
     website: {
       type: String,
@@ -21,6 +23,10 @@ const bootcampSchema = new mongoose.Schema(
         /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/,
         "Please use a valid URL with HTTP or HTTPS",
       ],
+    },
+    phone: {
+      type: String,
+      maxlength: [20, "Phone number can not be longer than 20 characters"],
     },
     email: {
       type: String,
@@ -37,12 +43,10 @@ const bootcampSchema = new mongoose.Schema(
       // GeoJSON Point
       type: {
         type: String,
-        required: true,
         enum: ["Point"],
       },
       coordinates: {
         type: [Number],
-        required: true,
         index: "2dsphere",
       },
       formattedAddress: String,
@@ -69,7 +73,9 @@ const bootcampSchema = new mongoose.Schema(
       min: [1, "Rating must be at least 1"],
       max: [10, "Rating must can not be more than 10"],
     },
-    averageCost: Number,
+    averageCost: {
+      type: Number,
+    },
     photo: {
       type: String,
       default: "no-photo.jpg",
