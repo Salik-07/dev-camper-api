@@ -5,6 +5,7 @@ require("colors");
 
 const connectDB = require("./db/mongoose");
 const bootcampRouter = require("./routers/bootcamp");
+const errorHandler = require("./middleware/error");
 
 // Load env vars
 dotenv.config({ path: "./config/dev.env" });
@@ -20,5 +21,6 @@ if (process.env.NODE_ENV === "development") {
 
 app.use(express.json());
 app.use("/api/v1/bootcamps", bootcampRouter);
+app.use(errorHandler);
 
 module.exports = app;
