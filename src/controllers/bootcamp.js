@@ -1,7 +1,7 @@
 const Bootcamp = require("../models/bootcamp");
 const ErrorResponse = require("../utils/errorResponse");
 
-const getBootcamps = async (req, res) => {
+const getBootcamps = async (req, res, next) => {
   try {
     const bootcamps = await Bootcamp.find();
 
@@ -34,7 +34,7 @@ const getBootcamp = async (req, res, next) => {
   }
 };
 
-const createBootcamp = async (req, res) => {
+const createBootcamp = async (req, res, next) => {
   try {
     const bootcamp = await Bootcamp.create(req.body);
 
@@ -47,7 +47,7 @@ const createBootcamp = async (req, res) => {
   }
 };
 
-const updateBootcamp = async (req, res) => {
+const updateBootcamp = async (req, res, next) => {
   try {
     const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -69,7 +69,7 @@ const updateBootcamp = async (req, res) => {
   }
 };
 
-const deleteBootcamp = async (req, res) => {
+const deleteBootcamp = async (req, res, next) => {
   try {
     const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
 
