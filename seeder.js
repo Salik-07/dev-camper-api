@@ -3,10 +3,11 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 require("colors");
 
-const Bootcamp = require("./src/models/bootcamp");
-
 // Load env vars
 dotenv.config({ path: "./config/dev.env" });
+
+// Load models
+const Bootcamp = require("./src/models/bootcamp");
 
 // Connect to DB
 mongoose.connect(process.env.MONGODB_URL);
