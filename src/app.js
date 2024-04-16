@@ -1,6 +1,6 @@
+require("dotenv").config({ path: "./config/dev.env" });
 const express = require("express");
 const morgan = require("morgan");
-require("dotenv").config({ path: "./config/dev.env" });
 require("colors");
 
 const connectDB = require("./db/mongoose");
