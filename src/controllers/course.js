@@ -67,8 +67,45 @@ const addCourse = asyncHandler(async (req, res, next) => {
   });
 });
 
+const updateCourse = asyncHandler(async (req, res, next) => {
+  const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!course) {
+    return next(
+      new ErrorResponse(`Course not found with id of ${req.params.id}`, 404)
+    );
+  }
+
+  res.status(200).json({
+    success: true,
+    data: course,
+  });
+});
+
+const deleteCourse = asyncHandler(async (req, res, next) => {
+  const course = await Course.findById(req.params.id);
+
+  if (!course) {
+    return next(
+      new ErrorResponse(`Course not found with id of ${req.params.id}`, 404)
+    );
+  }
+
+  await course.deleteOne();
+
+  res.status(200).json({
+    success: true,
+    data: {},
+  });
+});
+
 module.exports = {
   getCourses,
   getCourse,
   addCourse,
+  updateCourse,
+  deleteCourse,
 };
