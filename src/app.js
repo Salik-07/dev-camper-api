@@ -2,7 +2,8 @@ require("dotenv").config({ path: "./config/dev.env" });
 const express = require("express");
 const morgan = require("morgan");
 const fileupload = require("express-fileupload");
-require("colors");
+const _colors = require("colors");
+const path = require("path");
 
 const connectDB = require("./db/mongoose");
 const bootcampRouter = require("./routers/bootcamp");
@@ -20,7 +21,11 @@ if (process.env.NODE_ENV === "development") {
 
 app.use(express.json());
 
+// File uploading
 app.use(fileupload());
+
+// Set static folder
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/v1/bootcamps", bootcampRouter);
 app.use("/api/v1/courses", courseRouter);

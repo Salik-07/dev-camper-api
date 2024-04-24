@@ -159,8 +159,6 @@ const getBootcampsInRadius = asyncHandler(async (req, res, next) => {
 const bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
   const bootcamp = await Bootcamp.findById(req.params.id);
 
-  console.log(bootcamp._id);
-
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)
@@ -187,6 +185,19 @@ const bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
   }
 
   file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`;
+
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (err) => {
+    if (err) {
+      return next(new ErrorResponse(`Problem with file upload`, 500));
+    }
+
+    await Bootcamp.findByIdAndUpdate(req.params.id, { photo: file.name });
+
+    res.status(200).json({
+      success: true,
+      data: file.name,
+    });
+  });
 });
 
 module.exports = {
