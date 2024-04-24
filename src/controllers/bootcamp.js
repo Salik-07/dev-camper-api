@@ -1,3 +1,4 @@
+const path = require("path");
 const Bootcamp = require("../models/bootcamp");
 const asyncHandler = require("../middleware/async");
 const ErrorResponse = require("../utils/errorResponse");
@@ -158,6 +159,8 @@ const getBootcampsInRadius = asyncHandler(async (req, res, next) => {
 const bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
   const bootcamp = await Bootcamp.findById(req.params.id);
 
+  console.log(bootcamp._id);
+
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)
@@ -182,6 +185,8 @@ const bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
       )
     );
   }
+
+  file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`;
 });
 
 module.exports = {
