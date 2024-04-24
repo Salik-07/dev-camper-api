@@ -1,6 +1,7 @@
 require("dotenv").config({ path: "./config/dev.env" });
 const express = require("express");
 const morgan = require("morgan");
+const fileupload = require("express-fileupload");
 require("colors");
 
 const connectDB = require("./db/mongoose");
@@ -18,8 +19,12 @@ if (process.env.NODE_ENV === "development") {
 }
 
 app.use(express.json());
+
+app.use(fileupload());
+
 app.use("/api/v1/bootcamps", bootcampRouter);
 app.use("/api/v1/courses", courseRouter);
+
 app.use(errorHandler);
 
 module.exports = app;
