@@ -6,10 +6,19 @@ const {
   updateCourse,
   deleteCourse,
 } = require("../controllers/course");
+const Course = require("../models/course");
+const queryResults = require("../middleware/query");
 
 const router = new express.Router({ mergeParams: true });
 
-router.get("/", getCourses);
+router.get(
+  "/",
+  queryResults(Course, {
+    path: "bootcamp",
+    select: "name description",
+  }),
+  getCourses
+);
 router.get("/:id", getCourse);
 router.post("/", addCourse);
 router.put("/:id", updateCourse);
