@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
+      unique: true,
       required: [true, "Please add an email address"],
       match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
@@ -46,6 +47,12 @@ userSchema.methods.generateAuthToken = async function () {
   });
 
   return token;
+};
+
+userSchema.methods.matchPassword = async function (password) {
+  const user = this;
+
+  return await bcrypt.compare(password, user.password);
 };
 
 // Hash the plain text password before saving
