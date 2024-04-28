@@ -12,7 +12,9 @@ const registerUser = asyncHandler(async (req, res) => {
     role,
   });
 
-  res.status(200).json({ success: true });
+  const token = await user.generateAuthToken();
+
+  res.status(200).json({ success: true, token });
 });
 
 module.exports = {
