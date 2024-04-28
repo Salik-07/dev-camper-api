@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
@@ -36,6 +37,18 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Hash the plain text password before saving
+userSchema.pre("save", async function (next) {
+  const user = this;
+  const salt = await bcrypt.genSalt(10);
+
+  if (user.isModified("password")) {
+    user.password = await bcrypt.hash(user.password, salt);
+  }
+
+  next();
+});
 
 const User = mongoose.model("User", userSchema);
 
