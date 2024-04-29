@@ -12,9 +12,7 @@ const registerUser = asyncHandler(async (req, res) => {
     role,
   });
 
-  const token = await user.generateAuthToken();
-
-  res.status(200).json({ success: true, token });
+  sendTokenReponse(user, 200, res);
 });
 
 const loginUser = asyncHandler(async (req, res, next) => {
@@ -39,11 +37,27 @@ const loginUser = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse("Invalid credentials", 401));
   }
 
-  // Create token
-  const token = await user.generateAuthToken();
-
-  res.status(200).json({ success: true, token });
+  sendTokenReponse(user, 200, res);
 });
+
+const sendTokenReponse = (user, statusCode, res) => {
+  const token = user.generateAuthToken();
+  const options = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === "production") {
+    options.secure = true;
+  }
+
+  res
+    .status(statusCode)
+    .cookie("token", token, options)
+    .json({ success: true, token });
+};
 
 module.exports = {
   registerUser,

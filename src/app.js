@@ -3,6 +3,7 @@ const express = require("express");
 const morgan = require("morgan");
 const fileupload = require("express-fileupload");
 const _colors = require("colors");
+const cookieParser = require("cookie-parser");
 const path = require("path");
 
 const connectDB = require("./db/mongoose");
@@ -20,7 +21,11 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
+// Body parser
 app.use(express.json());
+
+// Cookie parser
+app.use(cookieParser());
 
 // File uploading
 app.use(fileupload());
