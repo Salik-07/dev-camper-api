@@ -8,6 +8,7 @@ const {
 } = require("../controllers/course");
 const Course = require("../models/course");
 const queryResults = require("../middleware/query");
+const auth = require("../middleware/auth");
 
 const router = new express.Router({ mergeParams: true });
 
@@ -20,8 +21,8 @@ router.get(
   getCourses
 );
 router.get("/:id", getCourse);
-router.post("/", addCourse);
-router.put("/:id", updateCourse);
-router.delete("/:id", deleteCourse);
+router.post("/", auth, addCourse);
+router.put("/:id", auth, updateCourse);
+router.delete("/:id", auth, deleteCourse);
 
 module.exports = router;
