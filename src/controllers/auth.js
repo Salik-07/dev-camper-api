@@ -12,7 +12,7 @@ const registerUser = asyncHandler(async (req, res) => {
     role,
   });
 
-  sendTokenReponse(user, 200, res);
+  sendTokenReponse(user, 201, res);
 });
 
 const loginUser = asyncHandler(async (req, res, next) => {
