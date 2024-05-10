@@ -40,6 +40,32 @@ const loginUser = asyncHandler(async (req, res, next) => {
   sendTokenReponse(user, 200, res);
 });
 
+const getMe = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
+
+const forgotPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new ErrorResponse("There is no user with that email", 404));
+  }
+
+  const resetToken = user.getResetPasswordToken();
+
+  console.log(resetToken);
+
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
+
 const sendTokenReponse = (user, statusCode, res) => {
   const token = user.generateAuthToken();
   const options = {
@@ -59,17 +85,9 @@ const sendTokenReponse = (user, statusCode, res) => {
     .json({ success: true, token });
 };
 
-const getMe = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user._id);
-
-  res.status(200).json({
-    success: true,
-    data: user,
-  });
-});
-
 module.exports = {
   registerUser,
   loginUser,
   getMe,
+  forgotPassword,
 };
