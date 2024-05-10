@@ -1,4 +1,6 @@
+const crypto = require("crypto");
 const ErrorResponse = require("../utils/errorResponse");
+const sendEmail = require("../utils/sendEmail");
 const asyncHandler = require("../middleware/async");
 const User = require("../models/user");
 
@@ -58,12 +60,58 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
 
   const resetToken = user.getResetPasswordToken();
 
-  console.log(resetToken);
+  await user.save({ validateBeforeSave: false });
 
-  res.status(200).json({
-    success: true,
-    data: user,
+  // Create reset url
+  const resetUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/auth/reset-password/${resetToken}`;
+
+  const message = `You are receiving this email because you (or someone else)  has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Password reset token",
+      message,
+    });
+
+    res.status(200).json({
+      success: true,
+      data: "Email sent successfully",
+    });
+  } catch (e) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save({ validateBeforeSave: false });
+
+    return next(new ErrorResponse("Email could not be sent", 500));
+  }
+});
+
+const resetPassword = asyncHandler(async (req, res, next) => {
+  const resetPasswordToken = await crypto
+    .createHash("sha256")
+    .update(req.params.resetToken)
+    .digest("hex");
+
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
   });
+
+  if (!user) {
+    return next(new ErrorResponse("Invalid token", 400));
+  }
+
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+
+  await user.save();
+
+  sendTokenReponse(user, 200, res);
 });
 
 const sendTokenReponse = (user, statusCode, res) => {
@@ -90,4 +138,5 @@ module.exports = {
   loginUser,
   getMe,
   forgotPassword,
+  resetPassword,
 };
