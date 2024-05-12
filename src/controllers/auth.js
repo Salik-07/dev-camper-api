@@ -42,15 +42,6 @@ const loginUser = asyncHandler(async (req, res, next) => {
   sendTokenReponse(user, 200, res);
 });
 
-const getMe = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user._id);
-
-  res.status(200).json({
-    success: true,
-    data: user,
-  });
-});
-
 const forgotPassword = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
 
@@ -114,6 +105,46 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   sendTokenReponse(user, 200, res);
 });
 
+const getMe = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
+
+const updateUserDetails = asyncHandler(async (req, res, next) => {
+  const fieldsToUpdate = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+
+  const user = await User.findByIdAndUpdate(req.user._id, fieldsToUpdate, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
+
+const updatePassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id).select("+password");
+
+  if (!(await user.matchPassword(req.body.password))) {
+    return next(new ErrorResponse("Current password is incorrect", 400));
+  }
+
+  user.password = req.body.newPassword;
+
+  await user.save();
+
+  sendTokenReponse(user, 200, res);
+});
+
 const sendTokenReponse = (user, statusCode, res) => {
   const token = user.generateAuthToken();
   const options = {
@@ -136,7 +167,9 @@ const sendTokenReponse = (user, statusCode, res) => {
 module.exports = {
   registerUser,
   loginUser,
-  getMe,
   forgotPassword,
   resetPassword,
+  getMe,
+  updateUserDetails,
+  updatePassword,
 };

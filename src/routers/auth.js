@@ -2,17 +2,21 @@ const express = require("express");
 const {
   registerUser,
   loginUser,
-  getMe,
   forgotPassword,
   resetPassword,
+  getMe,
+  updateUserDetails,
+  updatePassword,
 } = require("../controllers/auth");
 const { auth } = require("../middleware/auth");
 
 const router = new express.Router();
 
+router.get("/me", auth, getMe);
+router.put("/update-user-details", auth, updateUserDetails);
+router.put("/update-user-password", auth, updatePassword);
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.get("/me", auth, getMe);
 router.post("/forgot-password", forgotPassword);
 router.put("/reset-password/:resetToken", resetPassword);
 
