@@ -7,7 +7,8 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 
 const connectDB = require("./db/mongoose");
-const userRouter = require("./routers/auth");
+const authRouter = require("./routers/auth");
+const userRouter = require("./routers/user");
 const bootcampRouter = require("./routers/bootcamp");
 const courseRouter = require("./routers/course");
 const errorHandler = require("./middleware/error");
@@ -33,7 +34,8 @@ app.use(fileupload());
 // Set static folder
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/api/v1/auth", userRouter);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/users", userRouter);
 app.use("/api/v1/bootcamps", bootcampRouter);
 app.use("/api/v1/courses", courseRouter);
 
