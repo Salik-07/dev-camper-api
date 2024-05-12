@@ -8,15 +8,19 @@ const {
   getBootcampsInRadius,
   bootcampPhotoUpload,
 } = require("../controllers/bootcamp");
-const courseRouter = require("./course");
 const Bootcamp = require("../models/bootcamp");
 const queryResults = require("../middleware/query");
 const { auth, authorize } = require("../middleware/auth");
+
+// Include other resource routers
+const courseRouter = require("./course");
+const reviewRouter = require("./review");
 
 const router = new express.Router();
 
 // Include other resource routers
 router.use("/:bootcampId/courses", courseRouter);
+router.use("/:bootcampId/reviews", reviewRouter);
 
 router.get("/", queryResults(Bootcamp, "courses"), getBootcamps);
 router.get("/:id", getBootcamp);
