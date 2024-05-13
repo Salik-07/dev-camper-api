@@ -114,6 +114,18 @@ const getMe = asyncHandler(async (req, res, next) => {
   });
 });
 
+const logout = asyncHandler(async (req, res, next) => {
+  res.cookie("token", "none", {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: {},
+  });
+});
+
 const updateUserDetails = asyncHandler(async (req, res, next) => {
   const fieldsToUpdate = {
     name: req.body.name,
@@ -170,6 +182,7 @@ module.exports = {
   forgotPassword,
   resetPassword,
   getMe,
+  logout,
   updateUserDetails,
   updatePassword,
 };

@@ -4,11 +4,16 @@ const ErrorResponse = require("../utils/errorResponse");
 const User = require("../models/user");
 
 const auth = asyncHandler(async (req, res, next) => {
-  const token = req.header("Authorization")?.replace("Bearer ", "");
-  //   const token = req?.cookies.token;
+  let token;
+
+  if (req.header("Authorization")) {
+    token = req.header("Authorization").replace("Bearer ", ""); // Set token from Bearer token in header
+  } else {
+    token = req?.cookies.token; // Set token from cookie
+  }
 
   if (!token) {
-    return next(new ErrorResponse("Not authorize to access this route", 401));
+    return next(new ErrorResponse("Not authorized to access this route", 401));
   }
 
   try {
@@ -16,13 +21,15 @@ const auth = asyncHandler(async (req, res, next) => {
     const user = await User.findById(decoded._id);
 
     if (!user) {
-      return next(new ErrorResponse("Not authorize to access this route", 401));
+      return next(
+        new ErrorResponse("Not authorized to access this route", 401)
+      );
     }
 
     req.user = user;
     next();
   } catch (err) {
-    return next(new ErrorResponse("Not authorize to access this route", 401));
+    return next(new ErrorResponse("Not authorized to access this route", 401));
   }
 });
 
