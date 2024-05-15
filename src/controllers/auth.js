@@ -106,7 +106,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
 });
 
 const getMe = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user.id);
 
   res.status(200).json({
     success: true,
@@ -132,7 +132,7 @@ const updateUserDetails = asyncHandler(async (req, res, next) => {
     email: req.body.email,
   };
 
-  const user = await User.findByIdAndUpdate(req.user._id, fieldsToUpdate, {
+  const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
     new: true,
     runValidators: true,
   });
@@ -144,7 +144,7 @@ const updateUserDetails = asyncHandler(async (req, res, next) => {
 });
 
 const updatePassword = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user._id).select("+password");
+  const user = await User.findById(req.user.id).select("+password");
 
   if (!(await user.matchPassword(req.body.password))) {
     return next(new ErrorResponse("Current password is incorrect", 400));
