@@ -25,10 +25,10 @@ const getBootcamp = asyncHandler(async (req, res, next) => {
 
 const createBootcamp = asyncHandler(async (req, res, next) => {
   // Add user to req body
-  req.body.user = req.user._id;
+  req.body.user = req.user.id;
 
   // Check for published bootcamp
-  const publishedBootcamp = await Bootcamp.findOne({ user: req.user._id });
+  const publishedBootcamp = await Bootcamp.findOne({ user: req.user.id });
 
   // If user is not an admin, they can only add a bootcamp if none is published yet
   if (publishedBootcamp && req.user.role !== "admin") {
@@ -58,10 +58,10 @@ const updateBootcamp = asyncHandler(async (req, res, next) => {
   }
 
   // Make sure user is bootcamp owner
-  if (bootcamp.user.toString() !== req.user._id && req.user.role !== "admin") {
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== "admin") {
     return next(
       new ErrorResponse(
-        `User ${req.user._id} is not authorized to update this bootcamp`,
+        `User ${req.user.id} is not authorized to update this bootcamp`,
         401
       )
     );
@@ -88,10 +88,10 @@ const deleteBootcamp = asyncHandler(async (req, res, next) => {
   }
 
   // Make sure user is bootcamp owner
-  if (bootcamp.user.toString() !== req.user._id && req.user.role !== "admin") {
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== "admin") {
     return next(
       new ErrorResponse(
-        `User ${req.user._id} is not authorized to delete this bootcamp`,
+        `User ${req.user.id} is not authorized to delete this bootcamp`,
         401
       )
     );
@@ -141,10 +141,10 @@ const bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
   }
 
   // Make sure user is bootcamp owner
-  if (bootcamp.user.toString() !== req.user._id && req.user.role !== "admin") {
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== "admin") {
     return next(
       new ErrorResponse(
-        `User ${req.user._id} is not authorized to update this bootcamp`,
+        `User ${req.user.id} is not authorized to update this bootcamp`,
         401
       )
     );
